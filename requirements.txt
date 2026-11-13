@@ -1,0 +1,21 @@
+# TalentScout v2 - direct dependencies, pinned to the versions the results were produced with.
+# Python 3.12. The full environment is in requirements-lock.txt (pip freeze).
+numpy==2.5.4
+pandas==3.1.1
+pyarrow==26.0.1
+scipy==1.18.1
+scikit-learn==1.9.1
+statsmodels==0.15.0
+lightgbm==4.7.0
+optuna==5.0.0
+shap==0.54.1
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# MLP (GPU). Install as tensorflow[and-cuda]==2.21.0 to get the CUDA libraries.
+tensorflow==2.21.0
+
+# notebooks
+jupyterlab==4.6.6
+nbconvert==7.17.2
+ipykernel==7.4.0
