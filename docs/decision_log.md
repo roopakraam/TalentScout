@@ -93,3 +93,18 @@ Two of these shift between sets for reasons that have nothing to do with footbal
 The searches found one study that used PSO for feature selection on FIFA data: Behravan and Razavi (2021, *Soft Computing* 25:2499–2511), for transfer-value regression on FIFA 20. No study compares GA, BPSO and BGWO for talent identification or evaluates selection under a temporal, player-grouped split. The gap statement in `docs/literature/research_gap.md` now cites that study and claims only the narrower gap.
 *Why:* an overclaimed gap is the first thing a reviewer checks.
 *Fallback:* if the manual Google Scholar pass finds a closer study, cite it and narrow the claim again.
+
+### Week 2 decisions: models and tuning (notebook 02)
+
+**D16. Tuning protocol (T2.6, T3.1, T3.2).** Optuna 5.0, 50 trials per study, maximising validation PR-AUC. The sampler seed varies (0 to 4 in the LightGBM comparison) while the model seed stays at 0, so two studies differ only in the hyperparameters they proposed. Search spaces as in the tracker; the random forest keeps 500 trees and takes `max_features` as a fraction (0.1 to 1); the MLP uses batch 256, at most 200 epochs, AdamW, and early stopping on validation PR-AUC with patience 10.
+The final configuration of every model is the best trial of its **seed-0 TPE study**. For LightGBM that is 0.5932, not the best of all ten LightGBM studies (0.6008).
+*Why:* every model then gets exactly 50 trials; choosing the best of 500 trials would overfit the validation set.
+*Fallback:* none needed; the other four TPE studies are reported only in the BO-vs-random comparison.
+
+**D17. Fitness function rules (T3.3, T3.4).** LightGBM with fixed settings (200 trees, learning rate 0.05, other parameters at library defaults), `scale_pos_weight` = 34.3, seed 0, 4 threads, `deterministic=True`. The cache stores validation PR-AUC by subset, so runs with another alpha can reuse it. **Every call counts toward the budget of 600, cache hits included.** An all-zero vector is repaired by switching on one random feature.
+Timing: 0.23 s per evaluation (20 random subsets; 0.28 s while other jobs were running), far below the 3-second fallback trigger, so the budget of 600 and the population of 20 stay.
+*Why:* equal "looks" per algorithm is the fairest budget rule; the alternative (counting only real trainings) would reward algorithms that revisit subsets.
+*Fallback:* none needed.
+
+**D18. With fixed settings, all 45 features score a validation PR-AUC of 0.499**, below the tuned model (0.593) and below several random subsets (up to 0.53). Current overall alone scores 0.471.
+*Why it matters:* some features hurt when a model trained on FIFA 15–18 is applied to FIFA 19–20, so feature selection can raise accuracy, and the H2a comparison must be like-for-like (subset and all features under the same fixed settings).

@@ -1,0 +1,10 @@
+model,setting,val PR-AUC,val ROC-AUC,val precision@50,val recall@50
+EA potential,baseline,0.4232,0.9609,0.56,0.2478
+Logistic regression,default,0.4834,0.9627,0.58,0.2566
+Random forest,default,0.5136,0.9579,0.66,0.292
+LightGBM,default,0.5258,0.9507,0.66,0.292
+MLP,default,0.5318,0.9618,0.64,0.2832
+Logistic regression,"tuned (TPE, 50 trials)",0.5316,0.9658,0.58,0.2566
+Random forest,"tuned (TPE, 50 trials)",0.5388,0.9563,0.72,0.3186
+LightGBM,"tuned (TPE, 50 trials)",0.5932,0.9516,0.82,0.3628
+MLP,"tuned (TPE, 50 trials)",0.5728,0.9623,0.7,0.3097

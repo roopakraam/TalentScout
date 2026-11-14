@@ -1,0 +1,10 @@
+,TPE,Random search
+best after 50 trials (mean),0.5956,0.5917
+best after 50 trials (sd),0.0031,0.0048
+best after 10 trials (mean),0.5886,0.5886
+best after 25 trials (mean),0.5926,0.5915
+mean of best-so-far curve,0.5907,0.589
+trials 11-50 scoring >= 0.58 (share),0.415,0.1
+trials 11-50: median PR-AUC,0.5785,0.5605
+seeds reaching 0.59,5.0,3.0
+"trials to reach 0.59 (median, reached only)",21.0,17.0
