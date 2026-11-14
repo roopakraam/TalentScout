@@ -132,3 +132,14 @@ Decided on the toy problem, before any football run.
 Verified on 14 Nov: killed by `timeout` after 240 s, the runner had saved GA seed 0 and left nothing of seed 1; restarted, it reported "2 runs requested, 1 already finished, 1 to do", ran seed 1 only, and both results matched the main runs exactly.
 
 **D26. Main experiment (T4.6).** GA seed 0 was run alone first and inspected (600 rows, no NaN, 524 distinct subsets, best PR-AUC 0.620 with 25 features), then moved aside, and all 40 runs were launched together on 13 Nov; they finished in about 40 minutes. The batch rerun of GA seed 0 reproduced the solo run exactly. The ablation `bpso_w_dec` (10 seeds) ran right after, into `results/ablation_bpso_inertia/`.
+
+### Week 5 decisions: comparing the optimizers (notebook 04)
+
+**D27. H2a is checked like-for-like, per run.** Reference: all 45 features under the fixed fitness settings (validation PR-AUC 0.4993); "within 0.01" means at least 0.4893; "at most a third" means 15 features or fewer. The tuned all-feature model (0.593) is reported only as context.
+*Why:* T5.2 asks for the all-feature LightGBM with the same fixed settings; comparing a fixed-settings subset with a tuned model would mix two effects.
+
+**D28. Statistics.** Primary family: best fitness of each run; Friedman test across the four methods, then two-sided Wilcoxon signed-rank tests on the six pairs (paired by seed), Holm-corrected (Derrac et al., 2011). Secondary family, corrected separately: the same six tests on subset size. The inertia ablation is a separate, pre-declared comparison outside both families.
+*Why:* keeps the confirmatory test (H2b) clean while still reporting size differences.
+
+**D29. α sweep with Binary GWO, α = 0.95, 0.90, 0.80, seeds 0-4, cache reused.** Binary GWO had the lowest mean fitness, best mean rank (1.6) and smallest spread; its edge over GA and Binary PSO is not significant, which the report states. Reusing cached PR-AUC values changes run time, not results, because PR-AUC does not depend on α. The empirical Pareto front uses every subset evaluated in any run (30,132 distinct subsets).
+*Result:* 14 of 15 sweep runs meet H2a; at α = 0.80 Binary GWO keeps 8-12 features with validation PR-AUC 0.620-0.640.

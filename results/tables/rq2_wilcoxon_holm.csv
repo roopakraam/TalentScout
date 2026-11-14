@@ -1,0 +1,7 @@
+comparison,mean difference (a - b),seeds where a is better,W,p,p (Holm),significant at 0.05
+GA vs Random search,-0.0373,10,0.0,0.002,0.0117,True
+Binary PSO vs Random search,-0.0465,10,0.0,0.002,0.0117,True
+Binary GWO vs Random search,-0.0529,10,0.0,0.002,0.0117,True
+GA vs Binary PSO,0.0092,3,15.0,0.2324,0.4648,False
+GA vs Binary GWO,0.0156,3,12.0,0.1309,0.3926,False
+Binary PSO vs Binary GWO,0.0064,3,16.0,0.2754,0.4648,False
