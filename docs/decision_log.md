@@ -86,3 +86,10 @@ Only three features have gaps: `league_level` (under 1.1%), `overall_change` (60
 Two of these shift between sets for reasons that have nothing to do with football: `overall_change` is always empty in FIFA 15 because there is no FIFA 14 in the data, and composure was only added to the game in FIFA 17.
 *Why:* imputing inside the pipeline keeps validation and test information out of training.
 *Fallback:* if the optimizers lean on either feature in a way that looks like an artefact, it will be discussed with the selection-frequency results.
+
+## 2026-11-14
+
+**D15. Research-gap statement narrowed (T1.12).**
+The searches found one study that used PSO for feature selection on FIFA data: Behravan and Razavi (2021, *Soft Computing* 25:2499–2511), for transfer-value regression on FIFA 20. No study compares GA, BPSO and BGWO for talent identification or evaluates selection under a temporal, player-grouped split. The gap statement in `docs/literature/research_gap.md` now cites that study and claims only the narrower gap.
+*Why:* an overclaimed gap is the first thing a reviewer checks.
+*Fallback:* if the manual Google Scholar pass finds a closer study, cite it and narrow the claim again.
