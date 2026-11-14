@@ -108,3 +108,22 @@ Timing: 0.23 s per evaluation (20 random subsets; 0.28 s while other jobs were r
 
 **D18. With fixed settings, all 45 features score a validation PR-AUC of 0.499**, below the tuned model (0.593) and below several random subsets (up to 0.53). Current overall alone scores 0.471.
 *Why it matters:* some features hurt when a model trained on FIFA 15–18 is applied to FIFA 19–20, so feature selection can raise accuracy, and the H2a comparison must be like-for-like (subset and all features under the same fixed settings).
+
+### Weeks 3-4 decisions: optimizers (src/optimizers, tests, notebook 03)
+
+**D19. One interface and one source of randomness per role (T3.5).** Every optimizer is `run(fitness, D, init_pop, budget, rng)`. The starting population comes from `default_rng(seed)` (each bit on with probability 0.5, all-zero rows repaired) and is identical for all four methods; each method's own random draws come from a separate stream, `default_rng(10000 + seed)`. Diversity is the mean pairwise Hamming distance of the population after each iteration. An `Evaluator` counts calls, stops at the budget and records the best-so-far fitness after every call.
+*Why:* the comparison is fair by construction, and `tests/test_optimizers.py` checks budget, shared start, monotone history and reproducibility for all four.
+
+**D20. GA details (T3.6).** The 2 elites keep their known fitness and are not re-evaluated, so a generation costs 18 calls; tournaments draw 3 distinct individuals; uniform crossover produces two complementary children; bit-flip mutation 1/45. With 600 calls the GA runs 32 full generations plus a partial 33rd of 4 calls.
+*Why:* re-evaluating elites would spend budget on known answers.
+
+**D21. Binary PSO uses inertia w = 1 (no damping), not the plan's 0.9 to 0.4 (T4.1).** On the toy problem (minimise the number of selected features, D = 45, 600 calls) the falling weight never converges: best 7.1 features on average against an optimum of 1, and the swarm stays almost as scattered as a random population (final diversity 20.6; a random population has 22.5). In binary PSO a velocity of 0 means "bit is 1 with probability 0.5"; when a bit already agrees with both bests the update is v = w·v, so any w < 1 pulls it back to a coin flip. With w = 1, the original algorithm of Kennedy and Eberhart (1997), the swarm reaches the optimum on 10 of 10 seeds. c1 = c2 = 2, clamp ±6 and the sigmoid transfer are unchanged.
+Decided on the toy problem, before any football run.
+*Fallback:* the plan's schedule is kept as the ablation `bpso_w_dec` and run on the football data with the same 10 seeds.
+
+**D22. Binary GWO details (T4.2).** The bGWO2 update with transfer 1/(1 + e^(−10(x − 0.5))) and a stochastic threshold; `a` falls linearly from 2 to 0 over the 29 iterations. Alpha, beta and delta are the three best *distinct* solutions found so far (a small archive), so the three leaders can never be the same vector.
+*Why:* with duplicates the pack follows one leader three times and loses the averaging that defines GWO.
+
+**D23. Random search control (T4.3)** evaluates the shared starting population, then batches of 20 random vectors (each bit on with probability 0.5, the same distribution as the start) until 600 calls; no population, so no diversity curve.
+
+**D24. Sanity checks (T3.7, T4.4).** Toy problem with 10 seeds; Breast Cancer Wisconsin with 5 seeds (the tracker suggested 3) and a budget of 300. The Breast Cancer fitness uses a standardised logistic regression with 5-fold cross-validated accuracy (all 30 features: 0.979). GA, Binary PSO (w = 1) and Binary GWO match or beat random search on every seed and every problem.
