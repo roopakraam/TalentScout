@@ -20,13 +20,14 @@ that predicts it as well as all 45?
 | Test season (FIFA 21) | Every model scores PR-AUC 0.28–0.35; subsets of 16–21 features match all 45 within noise; no model beats EA's potential rating (0.33) for the 80+ label, but LightGBM does for a 75+ label (0.60 vs 0.52) |
 | Lesson | Validation gains from feature selection did not transfer: the validation set was easier than test and the optimizers fitted its noise |
 
-The full write-up is `report/TalentScout_v2_Report.docx` (and `.pdf`); the paper is `paper/TalentScout_v2_Paper.docx` (and `.pdf`; LaTeX version in `paper/main.tex`).
+The full report and the paper are kept locally and are not part of this repository
+(`report/`, `paper/`, `docs/` and `data/` are git-ignored).
 
 ## Repository layout
 
 ```
-data/raw/            Kaggle CSV (not committed; scripts/download_data.py fetches it)
-data/processed/      labelled rows and frozen split ids (not committed; notebook 01 builds them)
+data/raw/            Kaggle CSV (git-ignored; scripts/download_data.py fetches it)
+data/processed/      labelled rows and frozen split ids (git-ignored; notebook 01 builds them)
 src/                 data pipeline, features, split, metrics, models, tuning, fitness function
 src/optimizers/      GA, Binary PSO, Binary GWO, random search (shared interface)
 notebooks/           01 data and label · 02 models and Bayesian tuning · 03 optimizer sanity check
@@ -35,10 +36,10 @@ scripts/             data download, Optuna studies, the full rerun
 run_experiments.py   resumable feature-selection runner (one CSV + JSON per algorithm and seed)
 tests/               unit tests for the optimizers (toy problems)
 results/             every run, study, table and figure
-report/              report chapters (Markdown) and the builder that makes the Word file
-paper/               LaTeX paper draft (LNCS format)
-docs/                decision log, literature notes, research-gap check, instructor notes
 ```
+
+Not in the repository (kept locally only): `report/` (report chapters and Word/PDF builder),
+`paper/` (conference paper draft), `docs/` (decision log, literature notes) and `data/`.
 
 ## Rerunning everything
 
@@ -66,11 +67,10 @@ bash scripts/reproduce_all.sh --clean     # every step in order, about 3 hours o
 | Final subsets retuned | `python scripts/run_hpo.py final` | 3 min | `results/hpo/final_*`, `results/final/` |
 | Cross-validation fallback | `run_experiments.py --fitness cv` | 40 min | `results/fallback_cv_fitness/` |
 | Test set, SHAP, case studies | notebooks 05 and 06 | 3 min | test tables and figures |
-| Report | `python report/build_report.py` | 10 s | `report/TalentScout_v2_Report.docx` |
 
 Every run and study writes its own file and is skipped if that file exists, so any step can be
 stopped and restarted. Seeds, thread counts and LightGBM's deterministic mode are fixed, so a
-rerun reproduces every number exactly (see `docs/reproducibility.md`).
+rerun reproduces every number exactly (seeds and thread settings are set in `src/` and `run_experiments.py`).
 
 Note on this machine: LightGBM needs the OpenMP runtime `libgomp.so.1`. Without root access it was
 unpacked into the virtual environment (`tf-gpu-env/lib/openmp`, added to `LD_LIBRARY_PATH` by the
@@ -81,5 +81,5 @@ activate script); with root, `sudo apt install libgomp1` does the same.
 * The data design (label, split, features) was frozen before any model was fitted (`git tag data-frozen`).
 * Every test player is removed from training and validation; a test checks it.
 * All optimizers get the same starting population per seed, the same 600 evaluations and the same seeds.
-* The final feature sets and the "best subset" were fixed on validation before the test set was used (decision D30), and each configuration was scored on the test set once.
-* Every decision is logged with its reason in `docs/decision_log.md`.
+* The final feature sets and the "best subset" were fixed on validation before the test set was used (decision D30 in the local decision log), and each configuration was scored on the test set once.
+* Every decision was logged with its reason in a decision log (kept locally).

@@ -34,3 +34,10 @@ Thumbs.db
 # Scratch
 tmp/
 *.tmp
+
+# Local-only folders (not pushed)
+paper/
+report/
+docs/
+data/
+tips.txt
