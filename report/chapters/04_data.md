@@ -6,7 +6,7 @@ The data are the Kaggle "EA Sports FC 24 Complete Player Dataset" (Leone, 2023),
 
 ## Label
 
-A row at version t is **eligible** if the player is 21 or younger and rated below 80 overall. It is **positive** if he reaches 80 or more in any of the next three versions:
+A row at version t is **eligible** if the player is 21 or younger and rated below 80 overall. It is **positive** if he reaches 80 or more in any of the next three versions (@eq:label):
 
 $$y_{i,t} = \mathbf{1}\left[\max_{k \in \{1,2,3\}} \mathrm{overall}_{i,t+k} \geq 80\right], \quad \mathrm{age}_{i,t} \leq 21, \quad \mathrm{overall}_{i,t} < 80$$ {#eq:label}
 

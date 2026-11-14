@@ -40,7 +40,7 @@ The Grey Wolf Optimizer (Mirjalili, Mirjalili and Lewis, 2014) models the social
 
 $$A = 2a\,r_1 - a, \qquad C = 2\,r_2, \qquad X_L' = X_L - A\,\left|C\,X_L - X\right|$$ {#eq:gwo}
 
-and the new position is the mean of the three X_L'. The coefficient a falls linearly from 2 to 0 over the run. While |A| > 1 the wolves can overshoot the leaders and explore; when |A| < 1 they close in.
+and the new position is the mean of the three X_L' of @eq:gwo. The coefficient a falls linearly from 2 to 0 over the run. While |A| > 1 the wolves can overshoot the leaders and explore; when |A| < 1 they close in.
 
 Emary et al. (2016) proposed two binary versions for wrapper feature selection. The second, bGWO2, used in this study, squashes the continuous mean position with a steep sigmoid and draws each bit:
 

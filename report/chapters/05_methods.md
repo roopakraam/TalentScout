@@ -35,7 +35,7 @@ The decision variable is **x** ∈ {0, 1}^45. The objective to minimise is the w
 
 $$f(\mathbf{x}) = \alpha\,\left(1 - \mathrm{PRAUC}_{\mathrm{val}}(\mathbf{x})\right) + (1 - \alpha)\,\frac{|\mathbf{x}|}{45}, \qquad \alpha = 0.99$$ {#eq:fitness}
 
-The only constraint is that at least one feature is selected; an all-zero vector is repaired by switching on one random bit. PRAUC_val(**x**) is the validation PR-AUC of a LightGBM model trained on the training rows with only the selected columns. Because the optimizers call this function thousands of times, LightGBM uses fixed, moderate settings (200 trees, learning rate 0.05, otherwise library defaults) instead of tuned ones. One evaluation takes about 0.23 seconds on the project laptop. Every evaluated subset is cached by its bit pattern; the cache stores PR-AUC rather than fitness, so runs with a different α can reuse it.
+In @eq:fitness, the only constraint is that at least one feature is selected; an all-zero vector is repaired by switching on one random bit. PRAUC_val(**x**) is the validation PR-AUC of a LightGBM model trained on the training rows with only the selected columns. Because the optimizers call this function thousands of times, LightGBM uses fixed, moderate settings (200 trees, learning rate 0.05, otherwise library defaults) instead of tuned ones. One evaluation takes about 0.23 seconds on the project laptop. Every evaluated subset is cached by its bit pattern; the cache stores PR-AUC rather than fitness, so runs with a different α can reuse it.
 
 ## The optimizers
 

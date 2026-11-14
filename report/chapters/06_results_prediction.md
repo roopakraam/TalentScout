@@ -32,7 +32,7 @@ Table: Test results (FIFA 21; 72 future elite players among 3,288; a random rank
 | MLP | 0.307 [0.222, 0.419] | 0.922 | 0.36 | 0.25 | 0.130 | 0.0184 |
 | LightGBM | 0.301 [0.205, 0.420] | 0.895 | 0.44 | 0.31 | 0.021 | 0.0188 |
 
-All five scorers land between 0.30 and 0.35. The intervals are wide, about ±0.10, because the test season has only 72 positives, and paired bootstrap comparisons find no significant difference. LightGBM minus EA potential is −0.026 [−0.116, 0.059], LightGBM minus the MLP −0.006 [−0.090, 0.084], and the MLP minus EA potential −0.020 [−0.105, 0.062]. In shortlist terms, EA potential's top 50 contains 28 of the 72 future elite players, LightGBM's top 50 contains 22.
+All five scorers land between 0.30 and 0.35 (@fig:test, which also shows the feature-subset configurations of @sec:results-optimization). The intervals are wide, about ±0.10, because the test season has only 72 positives, and paired bootstrap comparisons find no significant difference. LightGBM minus EA potential is −0.026 [−0.116, 0.059], LightGBM minus the MLP −0.006 [−0.090, 0.084], and the MLP minus EA potential −0.020 [−0.105, 0.062]. In shortlist terms, EA potential's top 50 contains 28 of the 72 future elite players, LightGBM's top 50 contains 22.
 
 ![Test PR-AUC of every model and final configuration with 95% bootstrap intervals. The grey line marks a random ranking.](results/figures/fig05a_test_pr_auc.png){#fig:test width=6.0}
 
