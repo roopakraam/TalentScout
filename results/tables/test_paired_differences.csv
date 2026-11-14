@@ -1,0 +1,9 @@
+comparison,PR-AUC difference,95% CI low,95% CI high,interval excludes 0
+H1b: LightGBM vs EA potential,-0.0263,-0.1159,0.0586,False
+H1a: LightGBM vs MLP,-0.0062,-0.0902,0.0835,False
+LightGBM vs logistic regression,-0.001,-0.0811,0.0793,False
+MLP vs EA potential,-0.0201,-0.1049,0.062,False
+GA subset vs all 45 features,-0.0052,-0.0621,0.0583,False
+Binary PSO subset vs all 45 features,0.0118,-0.0682,0.0974,False
+Binary GWO subset vs all 45 features,-0.0171,-0.0916,0.0515,False
+SHAP top-k vs all 45 features,-0.0104,-0.063,0.0395,False

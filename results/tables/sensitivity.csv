@@ -1,0 +1,10 @@
+setting,model,test rows,test positives,positive rate,test PR-AUC,95% CI low,95% CI high,lift over random
+"main (80+, missing dropped)","LightGBM, all 45 features",3288,72,0.0219,0.3009,0.2053,0.4201,13.7395
+"main (80+, missing dropped)","LightGBM, Binary PSO subset",3288,72,0.0219,0.3127,0.2215,0.4348,14.2783
+"main (80+, missing dropped)",EA potential,3288,72,0.0219,0.3272,0.2332,0.4463,14.9418
+"(a) 80+, missing counted as 0","LightGBM, all 45 features",4304,72,0.0167,0.3139,0.215,0.44,18.7628
+"(a) 80+, missing counted as 0","LightGBM, Binary PSO subset",4304,72,0.0167,0.3188,0.2246,0.4431,19.0585
+"(a) 80+, missing counted as 0",EA potential,4304,72,0.0167,0.326,0.2253,0.4584,19.4868
+"(b) 75+, missing dropped","LightGBM, all 45 features",3288,336,0.1022,0.5994,0.5477,0.648,5.8654
+"(b) 75+, missing dropped","LightGBM, Binary PSO subset",3288,336,0.1022,0.6079,0.5528,0.6585,5.9488
+"(b) 75+, missing dropped",EA potential,3288,336,0.1022,0.5191,0.4674,0.5726,5.0794

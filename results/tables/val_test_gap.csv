@@ -1,0 +1,10 @@
+configuration,features,val PR-AUC at selection (fixed settings),val PR-AUC (tuned),test PR-AUC,gap (val tuned - test)
+"LightGBM, all 45 features",45,0.4993,0.5932,0.3009,0.2923
+"LightGBM, GA subset",20,0.6346,0.636,0.2957,0.3403
+"LightGBM, Binary PSO subset",21,0.638,0.6497,0.3127,0.337
+"LightGBM, Binary GWO subset",16,0.6376,0.6243,0.2838,0.3405
+"LightGBM, SHAP top-20",20,0.5513,0.5915,0.2905,0.3011
+Logistic regression,45,,0.5316,0.3019,0.2297
+Random forest,45,,0.5388,0.3526,0.1861
+MLP,45,,0.5728,0.3071,0.2657
+EA potential (baseline),1,,0.4232,0.3272,0.096

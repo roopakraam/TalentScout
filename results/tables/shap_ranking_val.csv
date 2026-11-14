@@ -1,0 +1,46 @@
+,feature,group,mean |SHAP|,rank
+age,Age,Profile,0.7004,1
+movement_reactions,Reactions,Movement,0.6842,2
+skill_fk_accuracy,FK accuracy,Skill,0.3541,3
+overall,Overall (current),Rating,0.3539,4
+movement_sprint_speed,Sprint speed,Movement,0.3058,5
+attacking_short_passing,Short passing,Attacking,0.2923,6
+attacking_heading_accuracy,Heading accuracy,Attacking,0.2851,7
+height_cm,Height,Profile,0.2784,8
+mentality_positioning,Positioning,Mentality,0.2738,9
+defending_marking_awareness,Marking awareness,Defending,0.2674,10
+power_jumping,Jumping,Power,0.2456,11
+mentality_interceptions,Interceptions,Mentality,0.2446,12
+pace,Pace (face),Face stats,0.2063,13
+attacking_volleys,Volleys,Attacking,0.1968,14
+passing,Passing (face),Face stats,0.1941,15
+attacking_finishing,Finishing,Attacking,0.1922,16
+mentality_composure,Composure,Mentality,0.1911,17
+movement_balance,Balance,Movement,0.1853,18
+mentality_aggression,Aggression,Mentality,0.1743,19
+power_long_shots,Long shots,Power,0.1741,20
+skill_ball_control,Ball control,Skill,0.173,21
+mentality_vision,Vision,Mentality,0.1681,22
+defending_sliding_tackle,Sliding tackle,Defending,0.1656,23
+movement_agility,Agility,Movement,0.1611,24
+power_stamina,Stamina,Power,0.1586,25
+defending_standing_tackle,Standing tackle,Defending,0.1572,26
+power_strength,Strength,Power,0.1535,27
+overall_change,Overall change (1 yr),Profile,0.1526,28
+power_shot_power,Shot power,Power,0.1511,29
+attacking_crossing,Crossing,Attacking,0.1497,30
+weight_kg,Weight,Profile,0.1482,31
+movement_acceleration,Acceleration,Movement,0.1481,32
+shooting,Shooting (face),Face stats,0.1468,33
+skill_long_passing,Long passing,Skill,0.1456,34
+mentality_penalties,Penalties,Mentality,0.1397,35
+skill_curve,Curve,Skill,0.1332,36
+league_level,League level,Profile,0.1249,37
+skill_moves,Skill moves,Profile,0.1097,38
+dribbling,Dribbling (face),Face stats,0.0994,39
+physic,Physic (face),Face stats,0.0973,40
+preferred_foot,Preferred foot,Profile,0.0931,41
+defending,Defending (face),Face stats,0.0895,42
+skill_dribbling,Dribbling,Skill,0.0843,43
+weak_foot,Weak foot,Profile,0.0471,44
+position_group,Position group,Profile,0.0135,45

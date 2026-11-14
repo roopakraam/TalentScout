@@ -124,3 +124,31 @@ def load_cache(paths) -> dict[bytes, float]:
         for bits, score in zip(frame["mask"], frame["pr_auc"]):
             cache[bits_to_mask(bits).tobytes()] = float(score)
     return cache
+
+
+class CVFitnessFunction(FitnessFunction):
+    """Fallback fitness from plan section 9: grouped cross-validation on the training set only.
+
+    PR-AUC is the mean over ``n_splits`` folds of a StratifiedGroupKFold on the training
+    rows, grouped by player, with the same fixed LightGBM settings. The validation set is
+    never used, so a subset cannot be chosen for fitting validation noise.
+    """
+
+    def __init__(self, X_train, y_train, groups, n_splits: int = 3, alpha: float = config.ALPHA,
+                 lgbm_params: dict | None = None, n_jobs: int = config.N_JOBS, seed: int = config.SEED,
+                 cache: dict | None = None):
+        from sklearn.model_selection import StratifiedGroupKFold
+
+        super().__init__(X_train, y_train, X_train[:1], y_train[:1], alpha=alpha, lgbm_params=lgbm_params,
+                         n_jobs=n_jobs, seed=seed, cache=cache)
+        cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=seed)
+        self.folds = list(cv.split(self.X_train, self.y_train, groups=np.asarray(groups)))
+
+    def train_and_score(self, mask: np.ndarray) -> float:
+        cols = np.flatnonzero(mask)
+        scores = []
+        for fit_idx, score_idx in self.folds:
+            model = make_lgbm(class_ratio(self.y_train[fit_idx]), seed=self.seed, n_jobs=self.n_jobs, **self.lgbm_params)
+            model.fit(self.X_train[np.ix_(fit_idx, cols)], self.y_train[fit_idx])
+            scores.append(pr_auc(self.y_train[score_idx], model.predict_proba(self.X_train[np.ix_(score_idx, cols)])[:, 1]))
+        return float(np.mean(scores))

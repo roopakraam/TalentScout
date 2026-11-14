@@ -1,0 +1,4 @@
+,short_name,club_name,league_name,player_positions,age,overall,potential,overall_t1,overall_t2,overall_t3,score,rank,y
+correct star,S. Tonali,Milan,Serie A,"CDM, CM",20,77,91,77.0,84.0,86.0,0.9936844053515648,1,1.0
+missed star,R. Kolo Muani,Nantes,Ligue 1,"ST, RW, LW",21,64,73,74.0,78.0,84.0,4.392747651569087e-06,2412,1.0
+false alarm,D. Zagadou,Borussia Dortmund,Bundesliga,CB,21,79,86,78.0,77.0,74.0,0.987898490221281,2,0.0

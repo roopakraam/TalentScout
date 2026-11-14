@@ -5,6 +5,8 @@
     python run_experiments.py --algs bpso_w_dec      # ablation: Binary PSO with the falling inertia weight
     python run_experiments.py --algs bgwo --alpha 0.95 0.90 0.80 --seeds 0 1 2 3 4 \
         --out results/alpha_sweep --reuse-cache      # trade-off sweep (T5.7)
+    python run_experiments.py --algs ga bpso bgwo --seeds 0 1 2 3 4 --fitness cv \
+        --out results/fallback_cv_fitness            # plan section 9 fallback: grouped CV on train
 
 The runner is resumable: a run whose summary file exists is skipped, so a
 crash or a restart costs at most the runs that were in progress.
@@ -38,11 +40,11 @@ def run_name(alg: str, seed: int, alpha: float) -> str:
     return f"{alg}_alpha{alpha:.2f}_seed{seed}"
 
 
-def run_one(alg: str, seed: int, alpha: float, out_dir: str, reuse_cache: bool) -> dict:
+def run_one(alg: str, seed: int, alpha: float, out_dir: str, reuse_cache: bool, fitness_kind: str = "val") -> dict:
     import numpy as np
 
     from src import data
-    from src.fitness import FitnessFunction, load_cache, mask_to_bits
+    from src.fitness import CVFitnessFunction, FitnessFunction, load_cache, mask_to_bits
     from src.optimizers import ALL_RUNNERS, init_population, run_rng
 
     out = Path(out_dir)
@@ -50,9 +52,14 @@ def run_one(alg: str, seed: int, alpha: float, out_dir: str, reuse_cache: bool) 
     X_train, y_train = data.get_xy(df, "train")
     X_val, y_val = data.get_xy(df, "val")
 
-    cache = load_cache(sorted(config.FS_DIR.glob("*.csv"))) if reuse_cache else None
-    preloaded = len(cache) if cache else 0
-    fitness = FitnessFunction(X_train, y_train, X_val, y_val, alpha=alpha, cache=cache)
+    if fitness_kind == "cv":
+        groups = df.loc[df["set"] == "train", "player_id"].to_numpy()
+        fitness = CVFitnessFunction(X_train, y_train, groups, alpha=alpha)
+        preloaded = 0
+    else:
+        cache = load_cache(sorted(config.FS_DIR.glob("*.csv"))) if reuse_cache else None
+        preloaded = len(cache) if cache else 0
+        fitness = FitnessFunction(X_train, y_train, X_val, y_val, alpha=alpha, cache=cache)
 
     start = time.perf_counter()
     result = ALL_RUNNERS[alg](fitness, D, init_population(seed, config.POP_SIZE, D), config.BUDGET, run_rng(seed))
@@ -64,7 +71,7 @@ def run_one(alg: str, seed: int, alpha: float, out_dir: str, reuse_cache: bool) 
 
     best_row = log.loc[log["fitness"].idxmin()]
     summary = {
-        "algorithm": alg, "seed": seed, "alpha": alpha, "budget": config.BUDGET,
+        "algorithm": alg, "seed": seed, "alpha": alpha, "budget": config.BUDGET, "fitness": fitness_kind,
         "pop_size": config.POP_SIZE, "D": D,
         "best_mask": mask_to_bits(result.best_mask),
         "best_features": mask_to_features(result.best_mask),
@@ -97,6 +104,8 @@ def main() -> None:
     parser.add_argument("--alpha", nargs="+", type=float, default=[config.ALPHA])
     parser.add_argument("--out", default=str(config.FS_DIR))
     parser.add_argument("--workers", type=int, default=4, help="runs in parallel (each model fit uses 4 threads)")
+    parser.add_argument("--fitness", choices=["val", "cv"], default="val",
+                        help="val: PR-AUC on the validation set (main study); cv: 3-fold grouped CV on train (fallback)")
     parser.add_argument("--reuse-cache", action="store_true",
                         help="start from the PR-AUC values of every subset already evaluated in results/feature_selection")
     args = parser.parse_args()
@@ -110,7 +119,8 @@ def main() -> None:
 
     start = time.perf_counter()
     with ProcessPoolExecutor(max_workers=args.workers, mp_context=mp.get_context("spawn")) as pool:
-        futures = [pool.submit(run_one, alg, seed, alpha, str(out), args.reuse_cache) for alg, seed, alpha in todo]
+        futures = [pool.submit(run_one, alg, seed, alpha, str(out), args.reuse_cache, args.fitness)
+                   for alg, seed, alpha in todo]
         for future in as_completed(futures):
             s = future.result()
             print(f"  {run_name(s['algorithm'], s['seed'], s['alpha']):22s} fitness {s['best_fitness']:.5f}  "

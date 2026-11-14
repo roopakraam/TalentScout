@@ -143,3 +143,20 @@ Verified on 14 Nov: killed by `timeout` after 240 s, the runner had saved GA see
 
 **D29. α sweep with Binary GWO, α = 0.95, 0.90, 0.80, seeds 0-4, cache reused.** Binary GWO had the lowest mean fitness, best mean rank (1.6) and smallest spread; its edge over GA and Binary PSO is not significant, which the report states. Reusing cached PR-AUC values changes run time, not results, because PR-AUC does not depend on α. The empirical Pareto front uses every subset evaluated in any run (30,132 distinct subsets).
 *Result:* 14 of 15 sweep runs meet H2a; at α = 0.80 Binary GWO keeps 8-12 features with validation PR-AUC 0.620-0.640.
+
+### Week 6 decisions: final configurations and the test set (notebooks 05-06)
+
+**D30. Final feature sets, fixed on validation before any test-set use (T6.1, T6.2).** Written 14 Nov 2026, before the test set was loaded for any model:
+- GA, Binary PSO, Binary GWO: the subset of the run with the best validation fitness among that optimizer's 10 runs at α = 0.99 (ties to the lower seed);
+- SHAP top-k: the k features with the largest mean |SHAP| of the tuned all-feature LightGBM on the validation set, k = median size of the three subsets above;
+- all 45 features.
+Each set gets its own LightGBM, tuned with 50 TPE trials (seed 0) on validation (T6.3); "all 45" reuses the seed-0 study from notebook 02. The headline "best subset" is the subset configuration with the highest tuned validation PR-AUC. Models are fitted on the training set only, so validation and test scores come from the same fitted model and the gap table (T6.5) is clean. The rule lives in `src/final.py`.
+*Why:* choosing a run, k or the best subset after seeing test scores would be selection on the test set.
+
+**D31. Test evaluation run once per configuration (T6.4), 14 Nov 2026.** Notebook 05 scored the five LightGBM configurations and the four RQ1 scorers on the test set. Afterwards the notebook was re-executed only to fix presentation (configuration labels, a calibration plot that used quantile bins and showed nothing at a 2% base rate) and to add diagnostics; no model, hyperparameter or feature set changed, and every test number is identical between executions (fixed seeds, deterministic models).
+*Result:* test PR-AUC 0.28–0.35 for every configuration (EA potential 0.327, LightGBM all features 0.301, best subset 0.313), no paired difference significant. The validation-to-test gap is 0.29–0.34 for the LightGBM configurations and 0.10 for EA potential.
+
+**D32. The plan's fallback for validation overfitting was triggered (plan §9, T6.5).** The selected subsets lost about 0.05 more PR-AUC between validation and test than all 45 features did. As the plan prescribes, the selection was rerun with a fitness that never uses validation: mean PR-AUC over a 3-fold cross-validation of the training rows, stratified and grouped by player (`CVFitnessFunction`), same fixed LightGBM settings, α, budget and starting populations; GA, Binary PSO and Binary GWO with seeds 0–3 (`results/fallback_cv_fitness/`).
+This is a diagnostic of the selection criterion, run after the test results were seen; none of its subsets is promoted to a final model, and the report labels it as such.
+
+**D33. Diagnostic of why validation was easier (T6.5).** Because EA potential (no fitting) also drops from 0.42 to 0.33, part of the gap is a property of the sets, not of any model. Notebook 05 compares the FIFA 19–20 rows that stayed in validation with those removed because the player is in the test set (age, positive rate, how close positives already are to 80, EA potential PR-AUC). Only EA potential and the training-set model are used; no new model is fitted on test.
