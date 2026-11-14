@@ -1,5 +1,8 @@
 # Paper draft
 
+**Word version (main):** `TalentScout_v2_Paper.docx` and `.pdf` (7 pages), built from `chapters/paper.md` with `python report/build_report.py --paper`.
+The LaTeX version below is kept for venues that require it.
+
 `main.tex` is a condensed version of the report in Springer LNCS format (about 2,500 words,
 3 figures, 2 tables, 18 references). The figures in `figures/` are the vector PDFs from
 `results/figures/`, and `references.bib` was checked against Crossref.

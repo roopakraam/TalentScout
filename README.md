@@ -20,7 +20,7 @@ that predicts it as well as all 45?
 | Test season (FIFA 21) | Every model scores PR-AUC 0.28–0.35; subsets of 16–21 features match all 45 within noise; no model beats EA's potential rating (0.33) for the 80+ label, but LightGBM does for a 75+ label (0.60 vs 0.52) |
 | Lesson | Validation gains from feature selection did not transfer: the validation set was easier than test and the optimizers fitted its noise |
 
-The full write-up is `report/TalentScout_v2_Report.docx` (and `.pdf`); a short paper draft is in `paper/`.
+The full write-up is `report/TalentScout_v2_Report.docx` (and `.pdf`); the paper is `paper/TalentScout_v2_Paper.docx` (and `.pdf`; LaTeX version in `paper/main.tex`).
 
 ## Repository layout
 

@@ -15,6 +15,9 @@ turns a restricted Markdown dialect into a .docx with python-docx:
   (a heading gets a label with ``{#sec:label}``)
 
 Chapters are the files ``report/chapters/*.md`` in name order; ``report/front.json``
+holds the title page. ``--paper`` builds the short paper from ``paper/chapters`` instead
+(compact layout: title block on page 1, no contents page, no page break per section);
+``report/front.json``
 holds the title page.
 """
 from __future__ import annotations
@@ -41,6 +44,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 CHAPTERS = HERE / "chapters"
 OUT = HERE / "TalentScout_v2_Report.docx"
+COMPACT = False                 # set by --paper
 
 BODY_FONT = "Times New Roman"
 FIGURE_SCALE = 0.88          # figure widths in the chapters are multiplied by this
@@ -186,7 +190,7 @@ def setup_styles(doc: Document) -> None:
 
 
 def title_page(doc: Document, front: dict) -> None:
-    for _ in range(4):
+    for _ in range(0 if COMPACT else 4):
         doc.add_paragraph()
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -199,12 +203,15 @@ def title_page(doc: Document, front: dict) -> None:
         run = p.add_run(front["subtitle"])
         run.font.size = Pt(13)
         run.italic = True
-    for _ in range(3):
+    for _ in range(1 if COMPACT else 3):
         doc.add_paragraph()
     for line in front["lines"]:
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        add_inline(p, line, size=12)
+        p.paragraph_format.space_after = Pt(0) if COMPACT else p.paragraph_format.space_after
+        add_inline(p, line, size=11 if COMPACT else 12)
+    if COMPACT:
+        return
     doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
     h = doc.add_paragraph()
     run = h.add_run("Contents")
@@ -314,7 +321,8 @@ def build() -> Path:
                 m = LABEL_RE.search(line)
                 text = LABEL_RE.sub("", line[level:]).strip()
                 if level == 1:
-                    doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
+                    if not COMPACT:
+                        doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
                     numbered = not is_unnumbered(text)
                     if numbered:
                         chapter += 1
@@ -382,6 +390,11 @@ def build() -> Path:
 
 
 if __name__ == "__main__":
+    if "--paper" in sys.argv:
+        COMPACT = True
+        HERE = ROOT / "paper"
+        CHAPTERS = HERE / "chapters"
+        OUT = HERE / "TalentScout_v2_Paper.docx"
     out = build()
     print(f"wrote {out.relative_to(ROOT)}")
     sys.exit(0)
