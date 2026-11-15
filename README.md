@@ -20,9 +20,6 @@ that predicts it as well as all 45?
 | Test season (FIFA 21) | Every model scores PR-AUC 0.28–0.35; subsets of 16–21 features match all 45 within noise; no model beats EA's potential rating (0.33) for the 80+ label, but LightGBM does for a 75+ label (0.60 vs 0.52) |
 | Lesson | Validation gains from feature selection did not transfer: the validation set was easier than test and the optimizers fitted its noise |
 
-The full report and the paper are kept locally and are not part of this repository
-(`report/`, `paper/`, `docs/` and `data/` are git-ignored).
-
 ## Repository layout
 
 ```
@@ -38,9 +35,6 @@ tests/               unit tests for the optimizers (toy problems)
 results/             every run, study, table and figure
 ```
 
-Not in the repository (kept locally only): `report/` (report chapters and Word/PDF builder),
-`paper/` (conference paper draft), `docs/` (decision log, literature notes) and `data/`.
-
 ## Rerunning everything
 
 Requirements: Python 3.12 and the packages in `requirements.txt` (exact versions of the
@@ -55,31 +49,26 @@ bash scripts/reproduce_all.sh --clean     # every step in order, about 3 hours o
 
 `reproduce_all.sh` runs, in order:
 
-| Step | Command | Time | Output |
-| --- | --- | --- | --- |
-| Data, label, split | notebook 01 | 1 min | `data/processed/`, `results/tables/` |
-| 13 Optuna studies | `python scripts/run_hpo.py all` | 1 h | `results/hpo/` |
-| Models and tuning | notebook 02 | 2 min | RQ1 validation table |
-| Optimizer checks | `python tests/test_optimizers.py`, notebook 03 | 5 min | `results/sanity_check/` |
-| 40 feature-selection runs | `python run_experiments.py` | 40 min | `results/feature_selection/` |
-| Inertia ablation, α sweep | `run_experiments.py` with `--algs bpso_w_dec`, `--alpha` | 25 min | `results/ablation_bpso_inertia/`, `results/alpha_sweep/` |
-| Optimizer comparison | notebook 04 | 1 min | RQ2 tables and figures |
-| Final subsets retuned | `python scripts/run_hpo.py final` | 3 min | `results/hpo/final_*`, `results/final/` |
-| Cross-validation fallback | `run_experiments.py --fitness cv` | 40 min | `results/fallback_cv_fitness/` |
-| Test set, SHAP, case studies | notebooks 05 and 06 | 3 min | test tables and figures |
+| Step | Command | Output |
+| --- | --- | --- |
+| Data, label, split | notebook 01 | `data/processed/`, `results/tables/` |
+| 13 Optuna studies | `python scripts/run_hpo.py all` | `results/hpo/` |
+| Models and tuning | notebook 02 | RQ1 validation table |
+| Optimizer checks | `python tests/test_optimizers.py`, notebook 03 | `results/sanity_check/` |
+| 40 feature-selection runs | `python run_experiments.py` | `results/feature_selection/` |
+| Inertia ablation, α sweep | `run_experiments.py` with `--algs bpso_w_dec`, `--alpha` | `results/ablation_bpso_inertia/`, `results/alpha_sweep/` |
+| Optimizer comparison | notebook 04 | RQ2 tables and figures |
+| Final subsets retuned | `python scripts/run_hpo.py final` | `results/hpo/final_*`, `results/final/` |
+| Cross-validation fallback | `run_experiments.py --fitness cv` | `results/fallback_cv_fitness/` |
+| Test set, SHAP, case studies | notebooks 05 and 06 | test tables and figures |
 
 Every run and study writes its own file and is skipped if that file exists, so any step can be
 stopped and restarted. Seeds, thread counts and LightGBM's deterministic mode are fixed, so a
 rerun reproduces every number exactly (seeds and thread settings are set in `src/` and `run_experiments.py`).
-
-Note on this machine: LightGBM needs the OpenMP runtime `libgomp.so.1`. Without root access it was
-unpacked into the virtual environment (`tf-gpu-env/lib/openmp`, added to `LD_LIBRARY_PATH` by the
-activate script); with root, `sudo apt install libgomp1` does the same.
 
 ## How the study protects its results
 
 * The data design (label, split, features) was frozen before any model was fitted (`git tag data-frozen`).
 * Every test player is removed from training and validation; a test checks it.
 * All optimizers get the same starting population per seed, the same 600 evaluations and the same seeds.
-* The final feature sets and the "best subset" were fixed on validation before the test set was used (decision D30 in the local decision log), and each configuration was scored on the test set once.
-* Every decision was logged with its reason in a decision log (kept locally).
+* The final feature sets and the "best subset" were fixed on validation before the test set was used, and each configuration was scored on the test set once.
