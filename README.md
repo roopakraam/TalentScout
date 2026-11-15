@@ -1,4 +1,4 @@
-# TalentScout v2
+# TalentScout
 
 Nature-inspired feature selection for football talent identification: a Genetic Algorithm,
 Binary PSO and Binary Grey Wolf Optimizer compared on FIFA 15 to EA Sports FC 24 player data.
